@@ -18,13 +18,25 @@
     document.getElementById("search-form").addEventListener("submit", function (event) {
       var input = document.getElementById("q");
       var errorEl = document.getElementById("search-error");
-      if (!SearchValidation.isValidSearchTerm(input.value)) {
+
+      if (SearchValidation.hasDisallowedCharacters(input.value)) {
+        // requirement (g): treat as a potential SQLi/XSS attack attempt -
+        // clear the input and stay on the homepage, no reflection.
+        event.preventDefault();
+        input.value = "";
+        errorEl.textContent = "Invalid input detected. Please try again.";
+        return;
+      }
+
+      if (!SearchValidation.isWithinLength(input.value)) {
         event.preventDefault();
         errorEl.textContent = "Search term must be " + SearchValidation.MIN_LENGTH + "-" +
-          SearchValidation.MAX_LENGTH + " characters, letters/numbers/spaces only.";
-      } else {
-        errorEl.textContent = "";
+          SearchValidation.MAX_LENGTH + " characters.";
+        return;
       }
+
+      errorEl.textContent = "";
+      // requirement (h): valid input - let the form submit through to /search
     });
   </script>
 </body>

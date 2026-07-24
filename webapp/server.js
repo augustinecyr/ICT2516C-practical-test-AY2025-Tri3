@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const { isValidSearchTerm, MIN_LENGTH, MAX_LENGTH } = require("./public/validate.js");
+const { isWithinLength, hasDisallowedCharacters, MIN_LENGTH, MAX_LENGTH } = require("./public/validate.js");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,17 +21,19 @@ app.get("/search", (req, res) => {
 
   // requirement (f): min/max length, re-checked server-side (OWASP C3 -
   // never trust client-side validation alone)
-  const trimmedLength = term.trim().length;
-  if (trimmedLength < MIN_LENGTH || trimmedLength > MAX_LENGTH) {
+  if (!isWithinLength(term)) {
     return res
       .status(400)
       .send(`Search term must be between ${MIN_LENGTH} and ${MAX_LENGTH} characters.`);
   }
 
-  if (!isValidSearchTerm(term)) {
-    return res.status(400).send("Search term may only contain letters, numbers, and spaces.");
+  // requirement (g): SQLi/XSS-style attack attempt - redirect back to the
+  // homepage instead of reflecting or echoing the malicious value anywhere.
+  if (hasDisallowedCharacters(term)) {
+    return res.redirect("/");
   }
 
+  // requirement (h): valid input - show the dedicated results page
   res.sendFile(path.join(__dirname, "views", "search.html"));
 });
 

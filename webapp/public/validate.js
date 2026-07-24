@@ -13,15 +13,27 @@
   var MIN_LENGTH = 2;
   var MAX_LENGTH = 100;
 
-  function isValidSearchTerm(term) {
+  function isWithinLength(term) {
     if (typeof term !== "string") return false;
     var trimmed = term.trim();
-    if (trimmed.length < MIN_LENGTH || trimmed.length > MAX_LENGTH) return false;
-    return ALLOWED_PATTERN.test(trimmed);
+    return trimmed.length >= MIN_LENGTH && trimmed.length <= MAX_LENGTH;
+  }
+
+  // true = looks like an attack attempt (contains anything outside the
+  // whitelist, e.g. SQLi/XSS metacharacters: ' " ; -- < > etc.)
+  function hasDisallowedCharacters(term) {
+    if (typeof term !== "string") return true;
+    return !ALLOWED_PATTERN.test(term.trim());
+  }
+
+  function isValidSearchTerm(term) {
+    return isWithinLength(term) && !hasDisallowedCharacters(term);
   }
 
   return {
     isValidSearchTerm: isValidSearchTerm,
+    isWithinLength: isWithinLength,
+    hasDisallowedCharacters: hasDisallowedCharacters,
     MIN_LENGTH: MIN_LENGTH,
     MAX_LENGTH: MAX_LENGTH
   };
