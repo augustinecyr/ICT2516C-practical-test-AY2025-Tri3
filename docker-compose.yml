@@ -23,3 +23,19 @@ services:
       MYSQL_DATABASE: testdb
       MYSQL_USER: admin
       MYSQL_PASSWORD: 2300411@sit.singaporetech.edu.sg
+
+  gitserver:
+    image: gitea/gitea:latest
+    container_name: gitserver
+    restart: always
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    volumes:
+      - gitea_data:/data
+    ports:
+      - "3000:3000"
+      - "222:22"
+
+volumes:
+  gitea_data:
