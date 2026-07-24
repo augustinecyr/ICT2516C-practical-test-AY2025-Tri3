@@ -45,8 +45,10 @@ app.get("/search", async (req, res) => {
   res.sendFile(path.join(__dirname, "views", "search.html"));
 });
 
-app.listen(PORT, () => {
-  console.log(`webapp listening on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`webapp listening on port ${PORT}`);
+  });
+}
 
 module.exports = app;
