@@ -11,6 +11,14 @@ services:
       - ./certs:/etc/nginx/certs
     depends_on:
       - mysqldb
+      - webapp
+
+  webapp:
+    build: ./webapp
+    container_name: webapp
+    restart: always
+    environment:
+      PORT: 3000
 
   mysqldb:
     image: mysql:8.0
