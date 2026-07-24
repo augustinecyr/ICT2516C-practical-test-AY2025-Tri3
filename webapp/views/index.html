@@ -6,10 +6,25 @@
 </head>
 <body>
   <h1>Search</h1>
-  <form action="/search" method="GET">
+  <form id="search-form" action="/search" method="GET">
     <label for="q">Search term:</label>
     <input type="text" id="q" name="q" required>
     <button type="submit">Search</button>
+    <p id="search-error" style="color:red;"></p>
   </form>
+
+  <script src="/validate.js"></script>
+  <script>
+    document.getElementById("search-form").addEventListener("submit", function (event) {
+      var input = document.getElementById("q");
+      var errorEl = document.getElementById("search-error");
+      if (!isValidSearchTerm(input.value)) {
+        event.preventDefault();
+        errorEl.textContent = "Search term may only contain letters, numbers, and spaces (max 100 characters).";
+      } else {
+        errorEl.textContent = "";
+      }
+    });
+  </script>
 </body>
 </html>
