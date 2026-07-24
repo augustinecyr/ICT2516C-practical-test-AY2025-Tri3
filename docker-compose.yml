@@ -19,6 +19,12 @@ services:
     restart: always
     environment:
       PORT: 3000
+      DB_HOST: mysqldb
+      DB_USER: admin
+      DB_PASSWORD: 2300411@sit.singaporetech.edu.sg
+      DB_NAME: testdb
+    depends_on:
+      - mysqldb
 
   mysqldb:
     image: mysql:8.0
@@ -26,6 +32,7 @@ services:
     restart: always
     volumes:
       - ./mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
     environment:
       MYSQL_ROOT_PASSWORD: pass
       MYSQL_DATABASE: testdb

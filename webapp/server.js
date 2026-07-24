@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const { isWithinLength, hasDisallowedCharacters, MIN_LENGTH, MAX_LENGTH } = require("./public/validate.js");
+const { logSearchQuery } = require("./db.js");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,7 +12,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "index.html"));
 });
 
-app.get("/search", (req, res) => {
+app.get("/search", async (req, res) => {
   const term = req.query.q;
 
   // requirement (e): a search term must be supplied
@@ -31,6 +32,13 @@ app.get("/search", (req, res) => {
   // homepage instead of reflecting or echoing the malicious value anywhere.
   if (hasDisallowedCharacters(term)) {
     return res.redirect("/");
+  }
+
+  // requirement (i): log the validated query + timestamp
+  try {
+    await logSearchQuery(term.trim());
+  } catch (err) {
+    console.error("Failed to log search query:", err.message);
   }
 
   // requirement (h): valid input - show the dedicated results page
