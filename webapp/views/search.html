@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search Results - ICT2516C Practical Test App</title>
+</head>
+<body>
+  <h1>Search Results</h1>
+  <p>Results for: <strong id="term"></strong></p>
+  <a href="/">Back to search</a>
+
+  <script>
+    // textContent (not innerHTML) so the term is always treated as plain
+    // text, never parsed as markup, regardless of server-side validation.
+    var params = new URLSearchParams(window.location.search);
+    document.getElementById("term").textContent = params.get("q") || "";
+  </script>
+</body>
+</html>

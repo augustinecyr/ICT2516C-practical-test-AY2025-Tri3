@@ -8,7 +8,7 @@
   <h1>Search</h1>
   <form id="search-form" action="/search" method="GET">
     <label for="q">Search term:</label>
-    <input type="text" id="q" name="q" required>
+    <input type="text" id="q" name="q" required minlength="2" maxlength="100">
     <button type="submit">Search</button>
     <p id="search-error" style="color:red;"></p>
   </form>
@@ -18,9 +18,10 @@
     document.getElementById("search-form").addEventListener("submit", function (event) {
       var input = document.getElementById("q");
       var errorEl = document.getElementById("search-error");
-      if (!isValidSearchTerm(input.value)) {
+      if (!SearchValidation.isValidSearchTerm(input.value)) {
         event.preventDefault();
-        errorEl.textContent = "Search term may only contain letters, numbers, and spaces (max 100 characters).";
+        errorEl.textContent = "Search term must be " + SearchValidation.MIN_LENGTH + "-" +
+          SearchValidation.MAX_LENGTH + " characters, letters/numbers/spaces only.";
       } else {
         errorEl.textContent = "";
       }

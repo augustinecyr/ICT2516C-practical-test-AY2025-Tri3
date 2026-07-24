@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const isValidSearchTerm = require("./public/validate.js");
+const { isValidSearchTerm, MIN_LENGTH, MAX_LENGTH } = require("./public/validate.js");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,12 +13,26 @@ app.get("/", (req, res) => {
 
 app.get("/search", (req, res) => {
   const term = req.query.q;
-  // OWASP Proactive Controls C3 - re-validate server-side; never trust
-  // client-side validation alone.
-  if (!isValidSearchTerm(term)) {
-    return res.status(400).send("Invalid search term.");
+
+  // requirement (e): a search term must be supplied
+  if (typeof term !== "string" || term.trim().length === 0) {
+    return res.status(400).send("A search term is required.");
   }
-  res.send(`Search results for: ${term}`);
+
+  // requirement (f): min/max length, re-checked server-side (OWASP C3 -
+  // never trust client-side validation alone)
+  const trimmedLength = term.trim().length;
+  if (trimmedLength < MIN_LENGTH || trimmedLength > MAX_LENGTH) {
+    return res
+      .status(400)
+      .send(`Search term must be between ${MIN_LENGTH} and ${MAX_LENGTH} characters.`);
+  }
+
+  if (!isValidSearchTerm(term)) {
+    return res.status(400).send("Search term may only contain letters, numbers, and spaces.");
+  }
+
+  res.sendFile(path.join(__dirname, "views", "search.html"));
 });
 
 app.listen(PORT, () => {
