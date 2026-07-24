@@ -9,13 +9,13 @@
   // characters and enforce length bounds instead of trying to blocklist
   // dangerous patterns (e.g. SQL/HTML metacharacters). No unicode support
   // required - the whitelist is ASCII letters/digits/spaces only.
-  var ALLOWED_PATTERN = /^[a-zA-Z0-9 ]+$/;
-  var MIN_LENGTH = 2;
-  var MAX_LENGTH = 100;
+  const ALLOWED_PATTERN = /^[a-zA-Z0-9 ]+$/;
+  const MIN_LENGTH = 2;
+  const MAX_LENGTH = 100;
 
   function isWithinLength(term) {
     if (typeof term !== "string") return false;
-    var trimmed = term.trim();
+    const trimmed = term.trim();
     return trimmed.length >= MIN_LENGTH && trimmed.length <= MAX_LENGTH;
   }
 

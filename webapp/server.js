@@ -6,6 +6,9 @@ const { logSearchQuery } = require("./db.js");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// don't disclose the underlying framework via the X-Powered-By header
+app.disable("x-powered-by");
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
